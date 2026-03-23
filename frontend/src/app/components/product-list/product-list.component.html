@@ -1,0 +1,43 @@
+<div class="ml-64 pt-16 min-h-screen bg-gray-100">
+  <div class="p-6">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-800">
+          {{ selectedCategory === 'All' ? 'All Medicines' : selectedCategory }}
+        </h1>
+        <p class="text-gray-500">{{ products.length }} products found</p>
+      </div>
+
+      <!-- Sort Dropdown -->
+      <div class="flex items-center space-x-4">
+        <label class="text-gray-600">Sort by:</label>
+        <select
+          (change)="onSortChange($event)"
+          class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+        >
+          <option value="default">Default</option>
+          <option value="price-low">Price: Low to High</option>
+          <option value="price-high">Price: High to Low</option>
+          <option value="rating">Rating</option>
+          <option value="name">Name</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Products Grid -->
+    <div *ngIf="products.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <app-product-card
+        *ngFor="let product of products"
+        [product]="product"
+      ></app-product-card>
+    </div>
+
+    <!-- No Products Found -->
+    <div *ngIf="products.length === 0" class="text-center py-20">
+      <span class="text-6xl">😔</span>
+      <h2 class="text-xl font-semibold text-gray-700 mt-4">No products found</h2>
+      <p class="text-gray-500 mt-2">Try searching with different keywords</p>
+    </div>
+  </div>
+</div>
