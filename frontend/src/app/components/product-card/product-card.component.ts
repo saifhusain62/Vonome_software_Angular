@@ -11,6 +11,9 @@ import { CommonModule } from '@angular/common';
 export class ProductCardComponent {
   @Input() product: any;
 
+  // Fallback image URL
+  fallbackImage = 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=200&h=200&fit=crop';
+
   getStars(rating: number): string[] {
     const stars: string[] = [];
     const fullStars = Math.floor(rating);
@@ -27,5 +30,10 @@ export class ProductCardComponent {
 
   getDiscount(): number {
     return Math.round(((this.product.originalPrice - this.product.price) / this.product.originalPrice) * 100);
+  }
+
+  onImageError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    img.src = this.fallbackImage;
   }
 }
