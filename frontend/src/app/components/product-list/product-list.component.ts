@@ -5,11 +5,22 @@ import { Product } from '../../models/product.model';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { ProductCardComponent } from '../product-card/product-card.component';
+import { FormsModule } from '@angular/forms';
+
+interface DeliveryDetails {
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  city: string;
+  zipCode: string;
+  notes: string;
+}
 
 @Component({
   selector: 'app-product-list',
   templateUrl: './product-list.component.html',
-  imports: [CommonModule, ProductCardComponent]
+  imports: [CommonModule, ProductCardComponent, FormsModule]
 })
 export class ProductListComponent implements OnInit, OnDestroy {
   products: Product[] = [];
@@ -17,9 +28,20 @@ export class ProductListComponent implements OnInit, OnDestroy {
   sortBy: string = 'default';
   cartCount: number = 0;
   showCart: boolean = false;
+  showDeliveryForm: boolean = false;
   cartItems: any[] = [];
   cartTotal: number = 0;
   private subscriptions: Subscription[] = [];
+
+  deliveryDetails: DeliveryDetails = {
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
+    city: '',
+    zipCode: '',
+    notes: ''
+  };
 
   constructor(
     private productService: ProductService,
@@ -84,8 +106,65 @@ export class ProductListComponent implements OnInit, OnDestroy {
       alert('Your cart is empty!');
       return;
     }
-    // Here you can navigate to checkout page or handle payment
-    alert(`Proceeding to payment for $${this.cartTotal.toFixed(2)}`);
-    // Example: this.router.navigate(['/checkout']);
+    this.showCart = false;
+    this.showDeliveryForm = true;
+  }
+
+  closeDeliveryForm(): void {
+    this.showDeliveryForm = false;
+  }
+
+  submitOrder(): void {
+    // Validate form
+    if (!this.deliveryDetails.name || !this.deliveryDetails.email || 
+        !this.deliveryDetails.phone || !this.deliveryDetails.address || 
+        !this.deliveryDetails.city || !this.deliveryDetails.zipCode) {
+      alert('Please fill in all required fields!');
+      return;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(this.deliveryDetails.email)) {
+      alert('Please enter a valid email address!');
+      return;
+    }
+
+    // Phone validation (basic)
+    const phoneRegex = /^[0-9]{10,}$/;
+    if (!phoneRegex.test(this.deliveryDetails.phone.replace(/[\s-]/g, ''))) {
+      alert('Please enter a valid phone number!');
+      return;
+    }
+
+    // Process order
+    const orderData = {
+      deliveryDetails: this.deliveryDetails,
+      cartItems: this.cartItems,
+      total: this.cartTotal,
+      orderDate: new Date()
+    };
+
+    console.log('Order submitted:', orderData);
+    
+    // Here you would typically send this to your backend
+    alert(`Order confirmed! Total: $${this.cartTotal.toFixed(2)}\n\nDelivery to: ${this.deliveryDetails.name}\n${this.deliveryDetails.address}, ${this.deliveryDetails.city}`);
+    
+    // Clear cart and form
+    this.cartService.clearCart();
+    this.resetDeliveryForm();
+    this.showDeliveryForm = false;
+  }
+
+  private resetDeliveryForm(): void {
+    this.deliveryDetails = {
+      name: '',
+      email: '',
+      phone: '',
+      address: '',
+      city: '',
+      zipCode: '',
+      notes: ''
+    };
   }
 }
