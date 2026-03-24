@@ -15,7 +15,7 @@ import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { UsersService } from './users.service';
 import { UpdateProfileDto } from '../auth/dto/update-profile.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/strategies/jwt-auth.guard';
 
 @Controller('users')
 export class UsersController {

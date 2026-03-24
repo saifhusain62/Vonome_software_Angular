@@ -74,12 +74,14 @@
       </div>
 
       <!-- Login Button -->
-      <button
-        (click)="onSubmit()"
-        class="w-full bg-gradient-to-r from-[#1eba9b] to-[#17a589] text-white py-3 rounded-lg font-semibold hover:from-[#17a589] hover:to-[#148f7a] transition-all"
-      >
-        Login
-      </button>
+   <button
+  (click)="onSubmit()"
+  [disabled]="isLoading"
+  class="w-full bg-gradient-to-r from-[#1eba9b] to-[#17a589] text-white py-3 rounded-lg font-semibold hover:from-[#17a589] hover:to-[#148f7a] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+>
+  <span *ngIf="!isLoading">Login</span>
+  <span *ngIf="isLoading">Logging in...</span>
+</button>
 
       <!-- Divider -->
       <div class="flex items-center my-6">

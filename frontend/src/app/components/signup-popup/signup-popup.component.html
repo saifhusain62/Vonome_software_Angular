@@ -122,15 +122,18 @@
       </div>
 
       <!-- Sign Up Button -->
-      <button
-        (click)="onSubmit()"
-        class="w-full text-white py-3 rounded-lg font-semibold transition-all"
-        style="background: linear-gradient(to right, #1eba9b, #189782);"
-        onmouseover="this.style.background='linear-gradient(to right, #189782, #157066)'"
-        onmouseout="this.style.background='linear-gradient(to right, #1eba9b, #189782)'"
-      >
-        Create Account
-      </button>
+    <!-- Add this in the button section -->
+<button
+  (click)="onSubmit()"
+  [disabled]="isLoading"
+  class="w-full text-white py-3 rounded-lg font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+  style="background: linear-gradient(to right, #1eba9b, #189782);"
+  onmouseover="this.style.background='linear-gradient(to right, #189782, #157066)'"
+  onmouseout="this.style.background='linear-gradient(to right, #1eba9b, #189782)'"
+>
+  <span *ngIf="!isLoading">Create Account</span>
+  <span *ngIf="isLoading">Creating Account...</span>
+</button>
 
       <!-- Divider -->
       <div class="flex items-center my-6">

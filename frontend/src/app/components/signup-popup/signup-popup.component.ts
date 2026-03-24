@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-signup-popup',
   templateUrl: './signup-popup.component.html',
-  imports: [CommonModule, FormsModule], 
+  imports: [CommonModule, FormsModule],
 })
 export class SignupPopupComponent implements OnInit, OnDestroy {
   showPopup: boolean = false;
@@ -19,12 +19,13 @@ export class SignupPopupComponent implements OnInit, OnDestroy {
   showPassword: boolean = false;
   showConfirmPassword: boolean = false;
   agreeTerms: boolean = false;
+  isLoading: boolean = false;
   private subscription!: Subscription;
 
   constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
-    this.subscription = this.authService.showSignupPopup$.subscribe(show => {
+    this.subscription = this.authService.showSignupPopup$.subscribe((show) => {
       this.showPopup = show;
       if (show) {
         this.resetForm();
@@ -53,6 +54,8 @@ export class SignupPopupComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(): void {
+    this.errorMessage = '';
+
     if (!this.name || !this.email || !this.password || !this.confirmPassword) {
       this.errorMessage = 'Please fill in all fields';
       return;
@@ -73,10 +76,18 @@ export class SignupPopupComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const success = this.authService.signup(this.name, this.email, this.password);
-    if (!success) {
-      this.errorMessage = 'Email already exists';
-    }
+    this.isLoading = true;
+    this.authService.signup(this.name, this.email, this.password).subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        console.log('Signup successful', response);
+      },
+      error: (error) => {
+        this.isLoading = false;
+        this.errorMessage =
+          error.error?.message || 'Signup failed. Please try again.';
+      },
+    });
   }
 
   private resetForm(): void {
@@ -86,5 +97,6 @@ export class SignupPopupComponent implements OnInit, OnDestroy {
     this.confirmPassword = '';
     this.errorMessage = '';
     this.agreeTerms = false;
+    this.isLoading = false;
   }
 }

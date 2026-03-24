@@ -12,7 +12,7 @@ import { RouterModule } from '@angular/router';
   selector: 'app-navbar',
   standalone: true,
   templateUrl: './navbar.component.html',
-  imports: [CommonModule, FormsModule, RouterModule], 
+  imports: [CommonModule, FormsModule, RouterModule],
 })
 export class NavbarComponent implements OnInit, OnDestroy {
   isLoggedIn: boolean = false;
@@ -24,24 +24,39 @@ export class NavbarComponent implements OnInit, OnDestroy {
   @Output() menuClick = new EventEmitter<void>();
 
   constructor(
-    private authService: AuthService,
+    public authService: AuthService,
     private productService: ProductService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
     this.subscriptions.push(
-      this.authService.isLoggedIn$.subscribe(status => {
+      this.authService.isLoggedIn$.subscribe((status) => {
         this.isLoggedIn = status;
       }),
-      this.authService.currentUser$.subscribe(user => {
+      this.authService.currentUser$.subscribe((user) => {
         this.currentUser = user;
       })
     );
+
+    // Load user profile if logged in
+    if (this.isLoggedIn) {
+      this.authService.getProfile().subscribe();
+    }
   }
 
   ngOnDestroy(): void {
-    this.subscriptions.forEach(sub => sub.unsubscribe());
+    this.subscriptions.forEach((sub) => sub.unsubscribe());
+  }
+
+  getProfilePictureUrl(): string {
+    return this.authService.getProfilePictureUrl(
+      this.currentUser?.profilePicture
+    );
+  }
+
+  getUserInitial(): string {
+    return this.currentUser?.name?.charAt(0)?.toUpperCase() || 'U';
   }
 
   toggleUserMenu(): void {
@@ -73,9 +88,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   navigateToHome(): void {
     this.router.navigate(['/']);
-    // Optional: Close user menu if open
     this.showUserMenu = false;
-    // Optional: Clear search query
     this.searchQuery = '';
   }
 }

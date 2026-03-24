@@ -1,6 +1,14 @@
 export interface User {
-  id: number;
+  id: string;
   name: string;
   email: string;
-  password: string;
+  profilePicture?: string;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface AuthResponse {
+  user: User;
+  access_token: string;
 }
