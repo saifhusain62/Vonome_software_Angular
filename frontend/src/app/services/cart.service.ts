@@ -1,123 +1,73 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { CartItem } from '../models/cart-item.model';
+import { Product } from '../models/product.model';
+
+export interface CartItem {
+  product: Product;
+  quantity: number;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class CartService {
-  private cartItems = new BehaviorSubject<CartItem[]>([]);
-  cartItems$ = this.cartItems.asObservable();
-
-  private cartCount = new BehaviorSubject<number>(0);
-  cartCount$ = this.cartCount.asObservable();
-
-  private cartTotal = new BehaviorSubject<number>(0);
-  cartTotal$ = this.cartTotal.asObservable();
-
-  private showCartPopup = new BehaviorSubject<boolean>(false);
-  showCartPopup$ = this.showCartPopup.asObservable();
-
-  private toastMessage = new BehaviorSubject<string | null>(null);
-  toastMessage$ = this.toastMessage.asObservable();
+  private cartItems: CartItem[] = [];
+  private cartItemsSubject = new BehaviorSubject<CartItem[]>([]);
+  cartItems$ = this.cartItemsSubject.asObservable();
 
   constructor() {
-    this.loadCartFromStorage();
+    // Load cart from localStorage if exists
+    const savedCart = localStorage.getItem('cart');
+    if (savedCart) {
+      this.cartItems = JSON.parse(savedCart);
+      this.cartItemsSubject.next(this.cartItems);
+    }
   }
 
-  private loadCartFromStorage(): void {
-    const saved = localStorage.getItem('medishop_cart');
-    if (saved) {
-      try {
-        const items: CartItem[] = JSON.parse(saved);
-        this.cartItems.next(items);
-        this.updateCountAndTotal(items);
-      } catch {
-        localStorage.removeItem('medishop_cart');
+  addToCart(product: Product): void {
+    const existingItem = this.cartItems.find(item => item.product.id === product.id);
+    
+    if (existingItem) {
+      existingItem.quantity++;
+    } else {
+      this.cartItems.push({ product, quantity: 1 });
+    }
+    
+    this.updateCart();
+  }
+
+  removeFromCart(productId: number): void {
+    this.cartItems = this.cartItems.filter(item => item.product.id !== productId);
+    this.updateCart();
+  }
+
+  updateQuantity(productId: number, quantity: number): void {
+    const item = this.cartItems.find(item => item.product.id === productId);
+    if (item) {
+      if (quantity <= 0) {
+        this.removeFromCart(productId);
+      } else {
+        item.quantity = quantity;
+        this.updateCart();
       }
     }
   }
 
-  private saveCartToStorage(items: CartItem[]): void {
-    localStorage.setItem('medishop_cart', JSON.stringify(items));
-  }
-
-  private updateCountAndTotal(items: CartItem[]): void {
-    const count = items.reduce((sum, item) => sum + item.quantity, 0);
-    const total = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    this.cartCount.next(count);
-    this.cartTotal.next(total);
-  }
-
-  addToCart(product: { id: string; name: string; price: number; image?: string }, quantity: number = 1): void {
-    const currentItems = [...this.cartItems.value];
-    const existingIndex = currentItems.findIndex(item => item.productId === product.id);
-
-    if (existingIndex > -1) {
-      currentItems[existingIndex] = {
-        ...currentItems[existingIndex],
-        quantity: currentItems[existingIndex].quantity + quantity
-      };
-      this.showToast(`${product.name} quantity updated in cart!`);
-    } else {
-      currentItems.push({
-        productId: product.id,
-        name: product.name,
-        price: product.price,
-        quantity: quantity,
-        image: product.image
-      });
-      this.showToast(`${product.name} added to cart!`);
-    }
-
-    this.cartItems.next(currentItems);
-    this.updateCountAndTotal(currentItems);
-    this.saveCartToStorage(currentItems);
-  }
-
-  removeFromCart(productId: string): void {
-    const currentItems = this.cartItems.value.filter(item => item.productId !== productId);
-    this.cartItems.next(currentItems);
-    this.updateCountAndTotal(currentItems);
-    this.saveCartToStorage(currentItems);
-    this.showToast('Item removed from cart');
-  }
-
-  updateQuantity(productId: string, quantity: number): void {
-    if (quantity <= 0) {
-      this.removeFromCart(productId);
-      return;
-    }
-
-    const currentItems = this.cartItems.value.map(item =>
-      item.productId === productId ? { ...item, quantity } : item
-    );
-
-    this.cartItems.next(currentItems);
-    this.updateCountAndTotal(currentItems);
-    this.saveCartToStorage(currentItems);
-  }
-
   clearCart(): void {
-    this.cartItems.next([]);
-    this.cartCount.next(0);
-    this.cartTotal.next(0);
-    localStorage.removeItem('medishop_cart');
-    this.showToast('Cart cleared');
+    this.cartItems = [];
+    this.updateCart();
   }
 
-  toggleCartPopup(): void {
-    this.showCartPopup.next(!this.showCartPopup.value);
+  getCartCount(): number {
+    return this.cartItems.reduce((total, item) => total + item.quantity, 0);
   }
 
-  closeCartPopup(): void {
-    this.showCartPopup.next(false);
+  getCartTotal(): number {
+    return this.cartItems.reduce((total, item) => total + (item.product.price * item.quantity), 0);
   }
 
-  private showToast(message: string): void {
-    this.toastMessage.next(message);
-    setTimeout(() => {
-      this.toastMessage.next(null);
-    }, 3000);
+  private updateCart(): void {
+    this.cartItemsSubject.next(this.cartItems);
+    localStorage.setItem('cart', JSON.stringify(this.cartItems));
   }
 }

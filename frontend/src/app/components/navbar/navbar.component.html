@@ -3,8 +3,14 @@
     <div class="flex justify-between items-center h-16">
       <!-- Logo -->
       <div class="flex items-center">
-        <i class="fa-solid fa-capsules text-2xl" style="color: #1eba9b;"></i>
-        <span class="ml-2 text-xl font-bold" style="color: #1eba9b;">MediShop</span>
+        <a 
+          routerLink="/" 
+          class="flex items-center cursor-pointer hover:opacity-80 transition-opacity"
+          (click)="navigateToHome()"
+        >
+          <i class="fa-solid fa-capsules text-2xl" style="color: #1eba9b;"></i>
+          <span class="ml-2 text-xl font-bold" style="color: #1eba9b;">MediShop</span>
+        </a>
       </div>
 
       <!-- Search Bar -->

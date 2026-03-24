@@ -1,15 +1,18 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
+import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { ProductService } from '../../services/product.service';
 import { User } from '../../models/user.model';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
+  standalone: true,
   templateUrl: './navbar.component.html',
-  imports: [CommonModule, FormsModule], 
+  imports: [CommonModule, FormsModule, RouterModule], 
 })
 export class NavbarComponent implements OnInit, OnDestroy {
   isLoggedIn: boolean = false;
@@ -18,9 +21,12 @@ export class NavbarComponent implements OnInit, OnDestroy {
   searchQuery: string = '';
   private subscriptions: Subscription[] = [];
 
+  @Output() menuClick = new EventEmitter<void>();
+
   constructor(
     private authService: AuthService,
-    private productService: ProductService
+    private productService: ProductService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -59,5 +65,17 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   onSearch(): void {
     this.productService.searchProducts(this.searchQuery);
+  }
+
+  onMenuClick(): void {
+    this.menuClick.emit();
+  }
+
+  navigateToHome(): void {
+    this.router.navigate(['/']);
+    // Optional: Close user menu if open
+    this.showUserMenu = false;
+    // Optional: Clear search query
+    this.searchQuery = '';
   }
 }

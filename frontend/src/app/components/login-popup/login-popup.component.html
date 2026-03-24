@@ -8,10 +8,10 @@
   <!-- Popup -->
   <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden animate-pulse">
     <!-- Header -->
-    <div class="bg-gradient-to-r from-blue-600 to-blue-800 px-6 py-8 text-center">
+    <div class="bg-gradient-to-r from-[#1eba9b] to-[#17a589] px-6 py-8 text-center">
       <span class="text-5xl">🔐</span>
       <h2 class="text-2xl font-bold text-white mt-4">Welcome Back!</h2>
-      <p class="text-blue-200 mt-2">Login to your account</p>
+      <p class="text-[#b8f0e6] mt-2">Login to your account</p>
     </div>
 
     <!-- Close Button -->
@@ -38,7 +38,7 @@
             type="email"
             [(ngModel)]="email"
             placeholder="Enter your email"
-            class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1eba9b] focus:border-transparent"
           />
         </div>
       </div>
@@ -52,7 +52,7 @@
             [type]="showPassword ? 'text' : 'password'"
             [(ngModel)]="password"
             placeholder="Enter your password"
-            class="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            class="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1eba9b] focus:border-transparent"
           />
           <button
             type="button"
@@ -67,16 +67,16 @@
       <!-- Remember & Forgot -->
       <div class="flex justify-between items-center mb-6">
         <label class="flex items-center">
-          <input type="checkbox" class="w-4 h-4 text-blue-600 rounded" />
+          <input type="checkbox" class="w-4 h-4 text-[#1eba9b] rounded" />
           <span class="ml-2 text-sm text-gray-600">Remember me</span>
         </label>
-        <a href="#" class="text-sm text-blue-600 hover:underline">Forgot password?</a>
+        <a href="#" class="text-sm text-[#1eba9b] hover:underline">Forgot password?</a>
       </div>
 
       <!-- Login Button -->
       <button
         (click)="onSubmit()"
-        class="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 transition-all"
+        class="w-full bg-gradient-to-r from-[#1eba9b] to-[#17a589] text-white py-3 rounded-lg font-semibold hover:from-[#17a589] hover:to-[#148f7a] transition-all"
       >
         Login
       </button>
@@ -103,7 +103,7 @@
       <!-- Sign Up Link -->
       <p class="text-center mt-6 text-gray-600">
         Don't have an account?
-        <button (click)="switchToSignup()" class="text-blue-600 font-semibold hover:underline">
+        <button (click)="switchToSignup()" class="text-[#1eba9b] font-semibold hover:underline">
           Sign Up
         </button>
       </p>

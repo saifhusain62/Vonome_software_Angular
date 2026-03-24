@@ -1,9 +1,35 @@
 <div class="min-h-screen bg-gray-100">
-  <!-- Navbar -->
-  <app-navbar></app-navbar>
+  <!-- Navbar with hamburger menu toggle -->
+  <app-navbar (menuClick)="toggleSidebar()"></app-navbar>
 
-  <!-- Sidebar -->
-  <app-sidebar></app-sidebar>
+  <!-- Desktop Sidebar - Always visible on desktop -->
+  <app-sidebar 
+    *ngIf="!isMobile" 
+    class="hidden md:block">
+  </app-sidebar>
+
+  <!-- Mobile Sidebar - Slide-in overlay -->
+  <div *ngIf="isMobile && sidebarOpen" class="fixed inset-0 z-50 flex">
+    <!-- Backdrop -->
+    <div 
+      class="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
+      (click)="closeSidebar()">
+    </div>
+    
+    <!-- Sidebar Panel -->
+    <div class="relative w-64 bg-white shadow-xl transform transition-transform duration-300 ease-in-out">
+      <!-- Close Button -->
+      <button 
+        (click)="closeSidebar()"
+        class="absolute top-4 right-4 p-2 text-gray-500 hover:text-gray-700">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+      
+      <app-sidebar></app-sidebar>
+    </div>
+  </div>
 
   <!-- Main Content -->
   <app-product-list></app-product-list>
