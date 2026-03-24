@@ -35,7 +35,7 @@ medicine-web-app/
 └── README.md
 ⚙️ Installation & Setup
 1️⃣ Clone the repository
-git clone https://github.com/your-username/medicine-web-app.git
+git clone https://github.com/saifhusain62/Vonome_software_Angular.git
 cd medicine-web-app
 2️⃣ Setup Backend (NestJS)
 cd backend
